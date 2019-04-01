@@ -120,3 +120,56 @@ F_make_the_qq_grid <- function(sel_var){
 for (j in 1:length(pro_tested)){
   ggsave(file=paste0("4_r_output/figure/figure8_",j,".png"), F_make_the_qq_grid(pro_tested[j]),width = 10,height = 6)
 }
+
+#ks test (Kolmogorov-Smirnov)
+F_ks_test <- function(pick_cond){
+for (i in 1:100){
+  kf2 <- kf1 %>% .[which(.$cond2==pick_cond),] %>% subset(.,loop.count==i)
+  ks_p <- rbind(ks_p, c(pick_cond,i,
+                        ks.test(kf2[,"dist_airport_m"],df2[,"dist_airport_m"])$p.value,
+                        ks.test(kf2[,"mst_500m"],df2[,"mst_500m"])$p.value,
+                        ks.test(kf2[,"ind_750m"],df2[,"ind_750m"])$p.value,
+                        ks.test(kf2[,"ndvi_300m"],df2[,"ndvi_300m"])$p.value))
+}
+  ks_s <- rbind(ks_s, c(pick_cond,thisn,
+                        table(as.numeric(ks_p[,3])<=0.05)["TRUE"],
+                        table(as.numeric(ks_p[,3])<=0.05/100)["TRUE"],
+                        table(as.numeric(ks_p[,4])<=0.05)["TRUE"],
+                        table(as.numeric(ks_p[,4])<=0.05/100)["TRUE"],
+                        table(as.numeric(ks_p[,5])<=0.05)["TRUE"],
+                        table(as.numeric(ks_p[,5])<=0.05/100)["TRUE"],
+                        table(as.numeric(ks_p[,6])<=0.05)["TRUE"],
+                        table(as.numeric(ks_p[,6])<=0.05/100)["TRUE"]))
+  ks_s
+}
+#read the correspnding file by loop from 40 to 80 (temp)
+ks_test_sum <- NULL
+for (d in 5:25){
+  thisn <- d*4
+  print(thisn)##
+  df3 <- fread( paste0("4_r_output/sims_result_",thisn,".csv"),sep=",",header=T) %>% 
+    mutate(grp=paste(n_profiles,"ep:",cond.note)) %>% as.data.frame()
+  df3$cond_loop <- paste(df3$cond.note,df3$loop.count,sep="-")
+  kf1 <- df3
+  kf1$cond2 <- factor(kf1$cond.note, levels = c("all random","bi_airport_5k","bi_mst_500","bi_ind_750","bi_ndvi_300",
+                                                "bi_mst_500 + bi_airport_5k","bi_ind_750 + bi_airport_5k","bi_airport_5k + bi_ndvi_300",
+                                                "bi_mst_500 + bi_ind_750", "bi_mst_500 + bi_ndvi_300",
+                                                "bi_ind_750 + bi_ndvi_300")) #sort the seq that i want, based on original varialbe's value
+  levels(kf1$cond2) <- c("None (simple random)","Air_B","MS_B","IND_B","NDVI_B",
+                         "Air_B + MS_B","Air_B + IND_B","Air_B + NDVI_B",
+                         "MS_B + IND_B","MS_B + NDVI_B",
+                         "IND_B + NDVI_B") 
+  ks_p <- NULL
+  ks_s <- NULL
+  ks_test_sum <- rbind(ks_test_sum,
+                       lapply(levels(kf1$cond2),F_ks_test) %>% do.call(rbind,.) %>% as.data.frame()  %>%`colnames<-`(c("cond","thisn","air_e","air_00e","ms_e","ms_00e","ind_e","ind_00e","ndvi_e","ndvi_00e"))
+  )
+}  
+
+ks_test_sum <- sapply(ks_test_sum, as.character) #because some are factor
+ks_test_sum[is.na(ks_test_sum)] <- ""
+write.table(ks_test_sum,file="ks_test.csv",sep=",",row.names = F)
+
+kf1 <- subset(mf1,loop.count==4001)
+
+ks.test(kf1$gvar,df2$ind_750m)$p.value
