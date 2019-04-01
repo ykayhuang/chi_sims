@@ -1,4 +1,5 @@
 #mod: 20190123
+#mod: 20190331 (2steps)
 
 #Sys.setlocale("LC_ALL", "English")
 library(dplyr)
@@ -43,6 +44,20 @@ df_truevs <- cbind( sapply(df2, min,na.rm=T),
                      sapply(df2, max,na.rm=T),sapply(df2, mean,na.rm=T),sapply(df2, sd,na.rm=T)) %>% 
                   as.data.frame()%>%  `colnames<-`(c("min","p5","q1","p50","q3","p95","max","mean","sd")) %>% 
                   mutate(iqr=q3-q1) %>%  `rownames<-`(colnames(df2)) %>% .[-1,]
+
+#get the 0,5,25,50,75,95,100,mean,sd,iqr, and make a data frame after kick out the zero (20190331)
+df8 <- df2
+df8[df8 == 0] <- NA
+df_2struevs <- cbind( sapply(df8, min,na.rm=T),
+                      sapply(df8, quantile,probs=.5,na.rm=T),
+                      sapply(df8, quantile,probs=.25,na.rm=T),
+                      sapply(df8, quantile,probs=.50,na.rm=T),
+                      sapply(df8, quantile,probs=.75,na.rm=T),
+                      sapply(df8, quantile,probs=.95,na.rm=T),
+                      sapply(df8, max,na.rm=T),sapply(df8, mean,na.rm=T),sapply(df8, sd,na.rm=T),
+                      sapply(df8, function(y) sum(length(which(!is.na(y)))))) %>% 
+  as.data.frame()%>%  `colnames<-`(c("min","p5","q1","p50","q3","p95","max","mean","sd","n_notna")) %>% 
+  mutate(iqr=q3-q1) %>%  `rownames<-`(colnames(df8)) %>% .[-1,]
 
 #try plot something
 #simple
