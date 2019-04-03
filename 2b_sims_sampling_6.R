@@ -108,7 +108,7 @@ F_make_the_qq_grid <- function(sel_var){
     mf1$gg <- ifelse(mf1$loop.count==9999,1,0)
     p <- qplot(data=mf1, sample=gvar, color = as.factor(loop.count),alpha = as.factor(loop.count),
                size=as.factor(gg))
-    p <- p+theme_bw()+scale_color_manual(values=c( rep("black",100),rep("brown",100),"blue"),guide = F )
+    p <- p+theme_bw()+scale_color_manual(values=c( rep("black",100),rep("green",100),"red"),guide = F )
     p <- p+scale_alpha_manual(values=c( rep(0.3,100),rep(0.2,100),1),guide = F )
     p <- p+scale_size_manual(values=c(rep(1,200),3),guide=F) #somehow not working
     p <- p + labs(y=NULL,title=pick_cond)
