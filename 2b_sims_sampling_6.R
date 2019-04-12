@@ -21,23 +21,23 @@ af40 <- fread( paste0("4_r_output/sims_result_",40,".csv"),sep=",",header=T) %>%
 af80 <- fread( paste0("4_r_output/sims_result_",80,".csv"),sep=",",header=T) %>% 
   mutate(grp=paste(n_profiles,"ep:",cond.note),ln=loop.count+8000) %>% as.data.frame()
 
-# testing
-# pick_cond <- "all random"
-# df5 <- rbind(af40,af80) %>% .[which(.$cond.note==pick_cond),]
-# mf1 <- cbind(df5$dist_airport_m,df5$mst_500m,df5$ind_750m,df5$ndvi_300m,df5$ln) %>% 
+# # testing
+# # pick_cond <- "all random"
+# # df5 <- rbind(af40,af80) %>% .[which(.$cond.note==pick_cond),]
+# mf1 <- cbind(df5$dist_airport_m,df5$mst_500m,df5$ind_750m,df5$ndvi_300m,df5$ln) %>%
 #         rbind(.,cbind(df2$dist_airport_m,df2$mst_500m,df2$ind_750m,df2$ndvi_300m,9999)) %>% as.data.frame()
 # colnames(mf1) <- c("dist_airport_m","mst_500m","ind_750m","ndvi_300m","loop.count")
 # mf1$gg <- ifelse(mf1$loop.count==9999,1,0)
-# # p<-qplot(sample = dist_airport_m, data = mf1, color=as.factor(loop.count))
-# # p
+#  p<-qplot(sample = dist_airport_m, data = mf1, color=as.factor(loop.count))
+#  p
 # # p<-qplot(sample = ndvi_300m, data = mf1, color=as.factor(loop.count))
 # # p
 # p <- ggplot(mf1, aes(dist_airport_m, color = as.factor(loop.count),alpha = as.factor(loop.count),
-#                      ,size=as.factor(gg))) + stat_ecdf(pad = FALSE)
+#                      size=as.factor(gg))) + stat_ecdf(pad = FALSE)
 # p <- p+theme_bw()+scale_color_manual(values=c( rep("black",100),rep("green",100),"red"),guide = F )
 # p <- p+scale_alpha_manual(values=c( rep(0.3,100),rep(0.2,100),1),guide = F )
 # p <- p+scale_size_manual(values=c(rep(1,200),3),guide=F) #somehow not working
-# p <- p + labs(x = NULL,y="CDF",title=pick_cond)
+# p <- p + labs(y="dist_airport_m",title="cond:all random/n=40",subtitle="red:true distribution in the city")
 # p
 
 #

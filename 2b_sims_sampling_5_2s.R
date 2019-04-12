@@ -163,7 +163,7 @@ for (ldf_m_s_c in c(2,5,8,11)){
                                         97,98,99,100,101,102))
   p4 <- p4 +scale_color_manual(values=c("black", "gray32","gray32","gray32","gray32",
                                         "gray58","gray58","gray58","gray58","gray58","gray58")) 
-  p4 <- p4 +theme_bw(base_size = 26)+ theme(legend.position="right") + expand_limits(y =c(0,8))
+  p4 <- p4 +theme_bw(base_size = 26)+ theme(legend.position="right") + expand_limits(y =c(0,15))
   p4 <- p4 +labs(#title = paste("The variable:",colnames(ldf_mis_summary)[ldf_m_s_c] %>% str_sub(.,9)),
     x="sampling campaign size, n",
     color="stratifying factor",shape="stratifying factor",
@@ -185,7 +185,7 @@ p5 <- p5 +theme_bw(base_size = 26)+ theme(legend.position="right") + expand_limi
 p5 <- p5 +labs(#title = paste("The variable:",colnames(ldf_mis_summary)[ldf_m_s_c] %>% str_sub(.,9)),
   x="sampling campaign size, n",
   color="stratifying factor",shape="stratifying factor",
-  y="zero count, %",subtitle ="dashed line=true city environment")+guides(colour = guide_legend(override.aes = list(linetype  = 0)))
+  y="zero count, %",title="MST_500",subtitle ="dashed line=true city environment")+guides(colour = guide_legend(override.aes = list(linetype  = 0)))
 p5 <- p5+geom_hline(yintercept = (.4729),size=1.2,linetype = "dashed",color="red")
 p5
 ggsave(paste0("4_r_output/figure/figure4_2s_mst.png"),p5,width=12,height=7)
@@ -201,7 +201,7 @@ p5 <- p5 +theme_bw(base_size = 26)+ theme(legend.position="right") + expand_limi
 p5 <- p5 +labs(#title = paste("The variable:",colnames(ldf_mis_summary)[ldf_m_s_c] %>% str_sub(.,9)),
   x="sampling campaign size, n",
   color="stratifying factor",shape="stratifying factor",
-  y="zero count, %",subtitle ="dashed line=true city environment")+guides(colour = guide_legend(override.aes = list(linetype  = 0)))
+  y="zero count, %",title="IND_750",subtitle ="dashed line=true city environment")+guides(colour = guide_legend(override.aes = list(linetype  = 0)))
 p5 <- p5+geom_hline(yintercept = (.5566),size=1.2,linetype = "dashed",color="red")
 p5
 ggsave(paste0("4_r_output/figure/figure4_2s_ind.png"),p5,width=12,height=7)
