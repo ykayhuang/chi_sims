@@ -139,6 +139,75 @@ for (j in 1:length(pro_tested)){
   ggsave(file=paste0("4_r_output/figure_201904/figure22_",j,".png"), F_make_the_qq_grid(pro_tested[j]),width = 8,height = 5)
 }
 
+##renew 201905 . break the figure22 to smaller (1. CHI-AOT) (2.without Air*) (3. air*)
+# CHI-AOT
+klist <- list()
+for (k in 1: length(pro_tested) ){
+sel_var <-  pro_tested[k]
+bf1 <- rbind(cbind(clean_df2[,which(colnames(clean_df2)==sel_var)],19999),
+        cbind(a32df[,which(colnames(a32df)==sel_var)],29999),
+        cbind(t111df[,which(colnames(t111df)==sel_var)],39999))%>% as.data.frame()
+colnames(bf1) <- c("gvar","loop.count")
+bf1$gg <- ifelse(bf1$loop.count==19999,1,  #1=true city
+                 ifelse(bf1$loop.count==29999,2, #2=32 current aot
+                        ifelse(bf1$loop.count==39999,3,0))) #4=111 furture aot (include 32)
+bf1 <- subset(bf1,gg!=3) #not put in the furture AOT
+p <- qplot(data=bf1, sample=gvar, color = as.factor(loop.count),alpha = as.factor(loop.count),
+           size=as.factor(loop.count))
+p <- p+theme_bw()+scale_color_manual(values=c( "red","blue"),guide = F )   #red for gg=1, #blue for gg=2/3
+p <- p+scale_alpha_manual(values=c( .5,1),guide = F )
+p <- p+scale_size_manual(values=c(1,2),guide=F) #somehow not working
+p <- p + labs(y=NULL,title=pro_tested[k])
+klist[[k]] <- p
+}
+ggsave(file=paste0("4_r_output/figure_201904/figure25.png"),
+       do.call("grid.arrange", c(klist, ncol=3)),
+       width = 8,height = 5)
+#1 dnoe
+#2.3
+F_make_the_qq_grid_201905 <- function(sel_var){
+    for (i in 1:length(levels(bf2$cond2) ) ){
+    pick_cond <- levels(bf2$cond2) [i]
+    df5 <- bf2 %>% .[which(.$cond2==pick_cond),]
+    mf1 <- df5[,which(colnames(df5)%in%c(sel_var,"ln"))] %>% as.matrix(.) %>% 
+      rbind(.,  cbind(clean_df2[,which(colnames(clean_df2)==sel_var)],19999),
+            cbind(a32df[,which(colnames(a32df)==sel_var)],29999),
+            cbind(t111df[,which(colnames(t111df)==sel_var)],39999))%>% as.data.frame()
+    colnames(mf1) <- c("gvar","loop.count")
+    mf1$gg <- ifelse(mf1$loop.count==19999,1,  #1=true city
+                     ifelse(mf1$loop.count==29999,2, #2=32 current aot
+                            ifelse(mf1$loop.count==39999,3,0))) #4=111 furture aot (include 32)
+    mf1 <- subset(mf1,gg<2) #no AOT
+    p <- qplot(data=mf1, sample=gvar, color = as.factor(loop.count),alpha = as.factor(loop.count),
+               size=as.factor(loop.count))
+    p <- p+theme_bw()+scale_color_manual(values=c( rep("black",100),rep("green",100),"red"),guide = F )   #red for gg=1, #blue for gg=2/3
+    p <- p+scale_alpha_manual(values=c( rep(0.3,100),rep(0.2,100),0.5),guide = F )
+    p <- p+scale_size_manual(values=c(rep(1,200),1.2),guide=F) #somehow not working
+    p <- p + labs(y=NULL,title=pick_cond)
+    rlist[[i]] <- p
+  }
+  g <- do.call("grid.arrange", c(rlist, ncol=4,top=sel_var))
+}
+
+bf2 <- subset(af1,!(cond2%in%c("Air_B*","Air_B* + MS_B","Air_B* + NDVI_B")))
+bf2$cond2 <- factor(bf2$cond2)
+
+rlist <- list()
+for (j in 1:length(pro_tested)){
+  ggsave(file=paste0("4_r_output/figure_201904/figure23_",j,".png"), F_make_the_qq_grid_201905(pro_tested[j]),width = 8,height = 5)
+}
+
+bf2 <- subset(af1,cond2%in%c("None (simple random)","Air_B*","Air_B* + MS_B","Air_B* + NDVI_B"))
+bf2$cond2 <- factor(bf2$cond2)
+
+rlist <- list()
+for (j in 1:length(pro_tested)){
+  ggsave(file=paste0("4_r_output/figure_201904/figure24_",j,".png"), F_make_the_qq_grid_201905(pro_tested[j]),width = 8,height = 5)
+}
+
+
+
+
 #so i finish the figure
 #table 1
 summary(clean_df2)
